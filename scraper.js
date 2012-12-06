@@ -74,6 +74,7 @@
               // text += '<a href="' + baseurl + campsite_link + '">View</a>';
               console.log(campsite + "*");
               found++;
+              if (found > false_positives_max) console.log(that);
             } else {
               console.log(campsite);
             }
