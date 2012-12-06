@@ -5,7 +5,8 @@
       querystring = require('querystring'),
       growler = require('growler'),
       fs = require('fs'),
-      argv = require('optimist').boolean('notify_growl').boolean('notify_boxcar').boolean('notify_pushover').boolean('hookup').boolean('waterfront').default('interval', 0).argv,
+      argv = require('optimist').boolean('notify_growl').boolean('notify_boxcar').boolean('notify_pushover')
+              .boolean('hookup').boolean('waterfront').default('interval', 0).default('false_positives_max', 100).argv,
       boxcar = require('boxcar'),
       push = require('pushover-notifications'),
       nconf = require('nconf'),
@@ -43,6 +44,7 @@
           departure = argv.departure,
           range = (departure) ? '2' : '',
           nights = argv.nights,
+          false_positives_max = argv.false_positives_max,
           notify_growl = argv.notify_growl,
           notify_boxcar = argv.notify_boxcar,
           notify_pushover = argv.notify_pushover;
@@ -67,12 +69,17 @@
             var that = $(this).find('td.sn a:not(.sitemarker)'),
                 campsite = parseInt(that.text(),10),
                 campsite_link = that.attr('href');
-     
             if ($.inArray(campsite,campsites_ignore[campground]) === -1) {
               text += '#' + campsite + ' ';
               // text += '<a href="' + baseurl + campsite_link + '">View</a>';
               console.log(campsite + "*");
               found++;
+            } else {
+              console.log(campsite);
+            }
+          });
+          if (found > 0) {
+            if (found < false_positives_max) {
               if (notify_growl) {
                 var growl_app = new growler.GrowlApplication(nconf.get('growl:growl_app')),
                     icon_file = path.join(__dirname, nconf.get('growl:icon')),
@@ -87,30 +94,30 @@
                   icon: icon
                 });        
               }
-            } else {
-              console.log(campsite);
+              if (notify_boxcar) {
+                var user = new boxcar.User(nconf.get('boxcar:username'), nconf.get('boxcar:password'));
+                user.notify(text, campground_fullname, null, null, nconf.get('boxcar:iconUrl'));
+              }
+              if (notify_pushover) {
+                var p = new push( {
+                  user: nconf.get('pushover:user'),
+                  token: nconf.get('pushover:token')
+                });
+                var msg = {
+                  message: text,
+                  title: campground_fullname
+                };
+                p.send(msg, function(err,result) {
+                  if (err) {
+                    throw err;
+                  }
+                  console.log(result);
+                });
+              }
             }
-          });
-          if (found > 0) {
-            if (notify_boxcar) {
-              var user = new boxcar.User(nconf.get('boxcar:username'), nconf.get('boxcar:password'));
-              user.notify(text, campground_fullname, null, null, nconf.get('boxcar:iconUrl'));
-            }
-            if (notify_pushover) {
-              var p = new push( {
-                user: nconf.get('pushover:user'),
-                token: nconf.get('pushover:token')
-              });
-              var msg = {
-                message: text,
-                title: campground_fullname
-              };
-              p.send(msg, function(err,result) {
-                if (err) {
-                  throw err;
-                }
-                console.log(result);
-              });
+            else {
+              console.log('Possibly too many false positives!');
+              console.log(body);
             }
           }
           else {
