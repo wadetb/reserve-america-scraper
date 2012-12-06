@@ -1,7 +1,6 @@
 {
   "campground_enum": { "Anastasia_Sp": 281003, "Bahia_Honda_Sp": 281005, "Curry_Hammock_Sp": 281228, "Long_Key_Sp": 281050 },
   "campsites_ignore": { "Anastasia_Sp": [], "Bahia_Honda_Sp": [], "Curry_Hammock_Sp": [], "Long_Key_Sp": [] },
-  "electric_enum": { "15": 3002, "20": 3003, "30":3004, "50":3005 },
   "growl":
   {
     "icon": "",

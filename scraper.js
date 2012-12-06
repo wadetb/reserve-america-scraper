@@ -18,7 +18,7 @@
   var campground_enum = nconf.get('campground_enum'),
       campsites_ignore = nconf.get('campsites_ignore') || [],
       campgrounds = argv.campgrounds.split(','),
-      electric_enum = nconf.get('electric_enum'),
+      electric_enum = { "15": 3002, "20": 3003, "30":3004, "50":3005 },
       interval = argv.interval * 1000 * 60;
 
   var scraper = function() {
