@@ -1,0 +1,21 @@
+{
+  "name": "scraper",
+  "version": "0.0.1",
+  "dependencies": {
+    "boxcar": "",
+    "express": "",
+    "growl": "",
+    "growler": "",
+    "jquery": "",
+    "jsdom": "",
+    "nconf": "",
+    "optimist": "",
+    "pushover-notifications": "",
+    "querystring": "",
+    "request": ""
+  },
+  "engines": {
+    "node": "",
+    "npm": ""
+  }
+}
