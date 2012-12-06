@@ -15,7 +15,7 @@
     "request": ""
   },
   "engines": {
-    "node": "",
-    "npm": ""
+    "node": "0.8.x",
+    "npm": "1.1.x"
   }
 }
