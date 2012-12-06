@@ -62,14 +62,14 @@
           console.log(url);
           // console.log(campground_fullname);
           var found = 0,
-              text = "Found Campsites: ";
+              text = "Found: ";
           $(body).find('table#calendar tbody tr:not(:has(td.sn a.unavail))').each(function(index) {
             var that = $(this).find('td.sn a:not(.sitemarker)'),
                 campsite = parseInt(that.text(),10),
                 campsite_link = that.attr('href');
      
             if ($.inArray(campsite,campsites_ignore[campground]) === -1) {
-              text += campsite + ' ';
+              text += '#' + campsite + ' ';
               // text += '<a href="' + baseurl + campsite_link + '">View</a>';
               console.log(campsite + "*");
               found++;
