@@ -6,7 +6,7 @@
       growler = require('growler'),
       fs = require('fs'),
       argv = require('optimist').boolean('notify_growl').boolean('notify_boxcar').boolean('notify_pushover')
-              .boolean('hookup').boolean('waterfront').default('interval', 0).default('false_positives_max', 100).argv,
+              .boolean('waterfront').default('interval', 0).default('false_positives_max', 100).argv,
       boxcar = require('boxcar'),
       push = require('pushover-notifications'),
       nconf = require('nconf'),
@@ -18,7 +18,7 @@
   var campground_enum = nconf.get('campground_enum'),
       campsites_ignore = nconf.get('campsites_ignore') || [],
       campgrounds = argv.campgrounds.split(','),
-      hookup_enum = nconf.get('hookup_enum'),
+      electric_enum = nconf.get('electric_enum'),
       interval = argv.interval * 1000 * 60;
 
   var scraper = function() {
@@ -37,8 +37,8 @@
       var campground_fullname = campground.replace('_Sp','').replace('_', ' '),
           state = argv.state,
           parkId = campground_enum[campground],
-          eqplen = nconf.get('eqplen') || null,
-          hookup = (argv.hookup) ? '3002' : '',
+          length = argv.length || null,
+          electric = electric_enum[argv.electric] || null,
           waterfront = (argv.waterfront) ? '3011' : '',
           arrival = argv.arrival,
           departure = argv.departure,
@@ -49,7 +49,7 @@
           notify_boxcar = argv.notify_boxcar,
           notify_pushover = argv.notify_pushover;
 
-      var query = querystring.stringify({ parkId:parkId, siteType:'2001', expfits:true, eqplen:eqplen, hookup:hookup, 
+      var query = querystring.stringify({ parkId:parkId, siteType:'2001', expfits:true, eqplen:length, hookup:electric, 
                   waterfront:waterfront, range:range,
                   arvdate:arrival, enddate:departure, lengthOfStay:nights, page:'calendar',
                   contractCode:state, siteTypeFilter:'RV or Tent' }),
