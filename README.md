@@ -14,8 +14,8 @@ Every 15 minutes, this will search reserveamerica.com for 30-amp electric campsi
 `--length`  
 `--electric`  
 `--departure`  
-`--waterfront` 
-`--notify_boxcar` 
+`--waterfront`  
+`--notify_boxcar`  
 `--notify_growl`  
 `--notify_pushover`  
 `--interval`
