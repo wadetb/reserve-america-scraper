@@ -67,16 +67,19 @@
           var found = 0,
               text = "Found: ";
           $(body).find('table#calendar tbody tr:not(:has(td.sn a.unavail))').each(function(index) {
-            var that = $(this).find('td.sn a:not(.sitemarker)'),
-                campsite = parseInt(that.text(),10),
-                campsite_link = that.attr('href');
-            if ($.inArray(campsite,campsites_ignore[campground]) === -1) {
-              text += '#' + campsite + ' ';
-              console.log(campsite + "*");
-              found++;
-              if (found > false_positives_max) console.log(that);
-            } else {
-              console.log(campsite);
+            var possible_consecutive_nights_found = $(this).find('td.status.a+td.status.a').length + 1;
+            if (possible_consecutive_nights_found >= nights) {
+              var that = $(this).find('td.sn a:not(.sitemarker)'),
+                  campsite = parseInt(that.text(),10),
+                  campsite_link = that.attr('href');
+              if ($.inArray(campsite,campsites_ignore[campground]) === -1) {
+                text += '#' + campsite + ' ';
+                console.log(campsite + '*');
+                found++;
+                if (found > false_positives_max) console.log(that);
+              } else {
+                console.log(campsite);
+              }
             }
           });
           if (found > 0) {
