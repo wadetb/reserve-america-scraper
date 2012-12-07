@@ -12,7 +12,8 @@
     "optimist": "",
     "pushover-notifications": "",
     "querystring": "",
-    "request": ""
+    "request": "",
+    "shorturl": ""
   },
   "engines": {
     "node": "0.8.x",
