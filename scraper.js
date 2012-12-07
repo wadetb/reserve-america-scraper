@@ -71,7 +71,6 @@
                 campsite_link = that.attr('href');
             if ($.inArray(campsite,campsites_ignore[campground]) === -1) {
               text += '#' + campsite + ' ';
-              // text += '<a href="' + baseurl + campsite_link + '">View</a>';
               console.log(campsite + "*");
               found++;
               if (found > false_positives_max) console.log(that);
@@ -81,6 +80,7 @@
           });
           if (found > 0) {
             if (found < false_positives_max) {
+              text += url;
               if (notify_growl) {
                 var growl_app = new growler.GrowlApplication(nconf.get('growl:growl_app')),
                     icon_file = path.join(__dirname, nconf.get('growl:icon')),
