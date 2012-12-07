@@ -10,7 +10,8 @@
       boxcar = require('boxcar'),
       push = require('pushover-notifications'),
       nconf = require('nconf'),
-      path = require('path');
+      path = require('path'),
+      shorturl = require('shorturl');
 
   var config_file = path.join(__dirname, argv.config_path, 'config.json');
   nconf.argv().env().file({ file: config_file });
@@ -80,41 +81,43 @@
           });
           if (found > 0) {
             if (found < false_positives_max) {
-              text += url;
-              if (notify_growl) {
-                var growl_app = new growler.GrowlApplication(nconf.get('growl:growl_app')),
-                    icon_file = path.join(__dirname, nconf.get('growl:icon')),
-                    icon = (fs.existsSync(icon_file)) ? fs.readFileSync(icon_file) : '';
-                growl_app.setNotifications({
-                  'Status': {}
-                });
-                growl_app.register();
-                growl_app.sendNotification('Status', {
-                  title: campground_fullname,
-                  text: text,
-                  icon: icon
-                });        
-              }
-              if (notify_boxcar) {
-                var user = new boxcar.User(nconf.get('boxcar:username'), nconf.get('boxcar:password'));
-                user.notify(text, campground_fullname, null, null, nconf.get('boxcar:iconUrl'));
-              }
-              if (notify_pushover) {
-                var p = new push( {
-                  user: nconf.get('pushover:user'),
-                  token: nconf.get('pushover:token')
-                });
-                var msg = {
-                  message: text,
-                  title: campground_fullname
-                };
-                p.send(msg, function(err,result) {
-                  if (err) {
-                    throw err;
-                  }
-                  console.log(result);
-                });
-              }
+              shorturl(url, function(shorturl_result) {
+                text += shorturl_result;
+                if (notify_growl) {
+                  var growl_app = new growler.GrowlApplication(nconf.get('growl:growl_app')),
+                      icon_file = path.join(__dirname, nconf.get('growl:icon')),
+                      icon = (fs.existsSync(icon_file)) ? fs.readFileSync(icon_file) : '';
+                  growl_app.setNotifications({
+                    'Status': {}
+                  });
+                  growl_app.register();
+                  growl_app.sendNotification('Status', {
+                    title: campground_fullname,
+                    text: text,
+                    icon: icon
+                  });        
+                }
+                if (notify_boxcar) {
+                  var user = new boxcar.User(nconf.get('boxcar:username'), nconf.get('boxcar:password'));
+                  user.notify(text, campground_fullname, null, null, nconf.get('boxcar:iconUrl'));
+                }
+                if (notify_pushover) {
+                  var p = new push( {
+                    user: nconf.get('pushover:user'),
+                    token: nconf.get('pushover:token')
+                  });
+                  var msg = {
+                    message: text,
+                    title: campground_fullname
+                  };
+                  p.send(msg, function(err,result) {
+                    if (err) {
+                      throw err;
+                    }
+                    console.log(result);
+                  });
+                }                
+              });
             }
             else {
               console.log('Possibly too many false positives!');
