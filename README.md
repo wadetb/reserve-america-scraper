@@ -1,6 +1,5 @@
 Example Usage
 =============
-
 `node scraper.js '--campgrounds=Bahia_Honda_Sp,Curry_Hammock_Sp,Long_Key_Sp' --state=FL --length=23 --electric=30`
 `--arrival=1/6/13 --departure=2/15/13 --nights=4 --notify_boxcar --interval=15`
 
@@ -8,12 +7,16 @@ Every 15 minutes, this will search reserveamerica.com for 30-amp electric campsi
 
 Additional Parameters
 ---------------------
-
 `--waterfront`
 `--notify_growl`
 `--notify_pushover`
 
-Additional Configuration
-------------------------
-
+Additional Configuration in config.json
+---------------------------------------
 campsites_ignore
+
+Getting Started with Sample Data
+--------------------------------
+cp config.json-template config.json
+cp Procfile-template Procfile
+foreman start
