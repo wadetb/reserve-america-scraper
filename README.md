@@ -5,18 +5,16 @@ Example Usage
 
 Every 15 minutes, this will search reserveamerica.com for 30-amp electric campsites at least 23 feet in length at Bahia Honda, Curry Hammock, and Long Key with four consecutive nights of availability from January 6, 2013 to February 15, 2013. Any matching campsites will be notified via Boxcar.
 
-Additional Parameters
----------------------
+
+---Additional Parameters
 `--waterfront`  
 `--notify_growl`  
 `--notify_pushover`
 
-Additional Configuration in config.json
----------------------------------------
+---Additional Configuration in config.json
 `campsites_ignore`
 
-Getting Started with Sample Data
---------------------------------
+---Getting Started with Sample Data
 `cp config.json-template config.json`  
 `cp Procfile-template Procfile`  
 `foreman start`
