@@ -9,8 +9,15 @@ Every 15 minutes, this will search reserveamerica.com for 30-amp electric campsi
 `--notify_growl`  
 `--notify_pushover`
 
-### Additional Configuration in config.json
-`campsites_ignore`
+### Required Configuration in config.json
+`campground_enum`
+*add additional campgrounds to campground_enum using values from reserveamerica.com*
+
+### Optional Configuration in config.json
+`campsites_ignore`  
+`growl`  
+`boxcar`  
+`pushover`
 
 ## Getting Started with Sample Data
 `cp config.json-template config.json`  
