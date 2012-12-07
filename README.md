@@ -17,6 +17,6 @@ campsites_ignore
 
 Getting Started with Sample Data
 --------------------------------
-cp config.json-template config.json
-cp Procfile-template Procfile
-foreman start
+`cp config.json-template config.json`  
+`cp Procfile-template Procfile`  
+`foreman start`
