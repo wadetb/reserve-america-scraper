@@ -7,13 +7,13 @@ Every 15 minutes, this will search reserveamerica.com for 30-amp electric campsi
 
 Additional Parameters
 ---------------------
-`--waterfront`
-`--notify_growl`
+`--waterfront`  
+`--notify_growl`  
 `--notify_pushover`
 
 Additional Configuration in config.json
 ---------------------------------------
-campsites_ignore
+`campsites_ignore`
 
 Getting Started with Sample Data
 --------------------------------
