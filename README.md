@@ -23,7 +23,7 @@ Every 15 minutes, this will search reserveamerica.com for 30-amp electric campsi
 [Download Node.js](http://nodejs.org/download/)  
 [Node.js with Heroku](https://devcenter.heroku.com/articles/nodejs)  
 [Heroku Toolbelt](https://toolbelt.heroku.com/)  
-*ignore any references to express*
+*ignore any references to express*  
 `cp config.json-template config.json`  
 `cp Procfile-template Procfile`
 
@@ -33,4 +33,4 @@ Every 15 minutes, this will search reserveamerica.com for 30-amp electric campsi
 ### Deploy to Heroku
 `heroku create`  
 `git push heroku master`  
-Use [Heroku Dashboard](https://dashboard.heroku.com) to start/stop dyno
+Use [Heroku Dashboard](https://dashboard.heroku.com) to start/stop dyno(s)
