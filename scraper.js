@@ -1,7 +1,6 @@
 (function () {
   "use strict";
 
-
   var $ = require("jquery"),
       request = require('request'),
       querystring = require('querystring'),
@@ -10,20 +9,34 @@
               .boolean('waterfront').default('interval', 0).argv,
       boxcar = require('boxcar'),
       push = require('pushover-notifications'),
+      nodemailer = require("nodemailer"),
       nconf = require('nconf'),
       path = require('path'),
       shorturl = require('shorturl');
 
   var config_file = path.join(__dirname, 'config.json');
   nconf.argv().env().file({ file: config_file });
-         
+
   var campground_enum = nconf.get('campground_enum'),
       campgrounds = argv.campgrounds.split(','),
       interval = argv.interval * 1000 * 60,
       notify_boxcar = argv.notify_boxcar,
-      notify_pushover = argv.notify_pushover;
+      notify_pushover = argv.notify_pushover,
+      notify_gmail = argv.notify_gmail;
 
-  var notify = function(title, text) {
+  var smtpTransport;
+  if (notify_gmail) {
+    smtpTransport = nodemailer.createTransport("SMTP", {
+      service: "Gmail",
+      auth: {
+          user: nconf.get('gmail:user'),
+          pass: nconf.get('gmail:password')
+      }
+    });
+  }
+
+  var notify = function(title, text, longtext) {
+    console.log('NOTIFY: '+title+' - '+text);
     if (argv.notify_boxcar) {
       var user = new boxcar.User(nconf.get('boxcar:username'), nconf.get('boxcar:password'));
       user.notify(text, title, null, null, nconf.get('boxcar:iconUrl'));
@@ -41,9 +54,23 @@
         if (err) {
           throw err;
         }
-        console.log(result);
       });
-    }                
+    }     
+    if (notify_gmail) {
+      var msg = {
+          from: nconf.get('gmail:user'),
+          to: nconf.get('gmail:recipients'),
+          subject: title,
+          html: longtext
+      }
+      smtpTransport.sendMail(msg, function(error, response) {
+        if (error) {
+          notify_gmail = false;
+          notify('ReserveAmerica Error', 'GMail notification failed:\n' + error);
+          notify_gmail = true;
+        }
+      });
+    }
   }
 
   var scraper = function() {
@@ -65,7 +92,8 @@
           length = argv.length || '',
           waterfront = (argv.waterfront) ? 'true' : '',
           arrival = argv.arrival,
-          nights = argv.nights;
+          nights = argv.nights,
+          flexibility = argv.flexibility || '4wk';
 
       var form = {
           contractCode:state,
@@ -78,7 +106,7 @@
           camping_2002_moreOptions:'true',
           camping_2002_3011:waterfront,
           campingDate:arrival,
-          campingDateFlex:'4w',
+          campingDateFlex:flexibility,
           lengthOfStay:nights
       };
 
@@ -92,8 +120,8 @@
             return;
           }
 
-          var text = $(body).find('.matchSummary').text();
-          var m = text.match(/^\s*(\d+) site\(s\) available\s+out of \d+/);
+          var matchSummary = $(body).find('.matchSummary').text();
+          var m = matchSummary.match(/^\s*(\d+) site\(s\) available\s+out of \d+/);
 
           if (!m) {
             notify('ReserveAmerica Error', 'Failed to detect number of sites available in the following text:\n'+text);
@@ -102,9 +130,18 @@
 
           var siteCount = m[1];
 
-          if (siteCount >= 1) {  
-            shorturl('http://reserveamerica.com/campsiteCalendar.do?'+querystring.stringify(form), function(shorturl_result) {
-              notify(siteCount + ' site(s) available at ' + campground_fullname, shorturl_result);
+          if (siteCount >= 1) { 
+            var table = $(body).find('#csitecalendar');
+            $(table).find('thead').find('tr').first().remove();
+            $(table).find('a').replaceWith(function() {
+              return $(this).contents();
+            }); 
+            $(table).find('#maplinkicon').remove();
+
+            var url = 'http://reserveamerica.com/campsiteCalendar.do?'+querystring.stringify(form); 
+
+            shorturl(url, function(shorturl_result) {
+              notify(siteCount + ' site(s) available at ' + campground_fullname, shorturl_result, shorturl_result+'\n'+$(table).html());
             });
           }
         
